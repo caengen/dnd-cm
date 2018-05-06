@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "build/dist",
+    "baseUrl": "./",
+    "paths": {
+      "@App/*": ["src/*"]
+    },
     "module": "esnext",
     "target": "es5",
     "lib": ["es6", "dom"],
