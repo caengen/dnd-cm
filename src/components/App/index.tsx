@@ -3,6 +3,8 @@ import { ThemeProvider } from 'styled-components';
 import { StyledApp } from './style';
 import theme from './theme';
 import Header from '@App/components/organisms/Header';
+import { AreaOfEffect } from '@App/components';
+import { Widget } from '@App/components/organisms/Widget';
 
 class App extends React.Component {
   public render() {
@@ -11,8 +13,11 @@ class App extends React.Component {
         <StyledApp>
           <Header />
           <p>
-            To get started, edit <code>src/App.tsx</code> and save to reload.
+            Spell area of effects
           </p>
+          <Widget width={480} height={480}>
+            <AreaOfEffect columns={10} rows={10} />
+          </Widget>
         </StyledApp>
       </ThemeProvider>
     );
