@@ -1,4 +1,7 @@
 {
+  "rules": {
+    "jsx-no-lambda": false
+  },
   "extends": ["tslint-react", "tslint-config-prettier"],
   "linterOptions": {
     "exclude": [
