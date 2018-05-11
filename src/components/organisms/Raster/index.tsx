@@ -1,6 +1,8 @@
 import * as React from "react";
 import { RasterProps, RasterState, CellModel } from "./types";
 import { Container, Cell, Grid } from "./styles";
+import { Bresenham } from "@App/components/organisms/Raster/bresenham";
+import { Coord } from "@App/types";
 
 export class Raster extends React.Component<RasterProps, RasterState> {
   constructor(props: RasterProps) {
@@ -10,7 +12,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       cells: [],
       spellActive: false,
       origin: undefined,
-      target: undefined
+      target: undefined,
+      plotLine: undefined
     }
   }
 
@@ -61,6 +64,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       newCells[resetOrigin.row][resetOrigin.col] = resetOrigin;
     }
 
+    this.resetPlotline(newCells);
+
     this.setState({
       spellActive: false,
       origin: undefined,
@@ -81,13 +86,41 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     if (target) {
       newCells[target.row][target.col] = {...target, state: "normal"} as CellModel;
     }
+
+    this.resetPlotline(newCells);
+
+    let line: Coord[] = [];
+    if (origin && newTarget) {
+      line = Bresenham.plotLine({x0: origin.col, y0: origin.row, x1: newTarget.col, y1: newTarget.row});
+      line.pop();
+      for (let coord of line) {
+        newCells[coord.y][coord.x] = {
+          ...newCells[coord.y][coord.x],
+          state: "hit"
+        }
+      }
+    }
     
     this.setState({
       target: newTarget,
-      cells: newCells
+      cells: newCells,
+      plotLine: line
     });
   }
 
+  resetPlotline = (cells: CellModel[][]) => {
+    const { plotLine } = this.state;
+    
+    for (let coord of plotLine || []) {
+      cells[coord.y][coord.x] = {
+        ...cells[coord.y][coord.x],
+        state: "normal"
+      }
+    }
+
+    return cells;
+  }
+  
   resetGrid = () => {
     const { cells, target, origin } = this.state;
 
@@ -98,6 +131,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     if (origin) {
       newCells[origin.row][origin.col] = {...origin, state: "normal"};
     }
+
+    this.resetPlotline(newCells);
 
     this.setState({
       target: undefined,
@@ -118,11 +153,12 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   renderRow = (row: CellModel[]) => row.map(this.renderCell);
     
   render() {
+    const { rows, columns } = this.props;
     const {cells} = this.state;
 
     return (
       <Container>
-        <Grid columns={8} rows={8} onMouseLeave={this.resetGrid}>
+        <Grid columns={columns} rows={rows} onMouseLeave={this.resetGrid}>
           {cells.map(this.renderRow)}
         </Grid>
       </Container>

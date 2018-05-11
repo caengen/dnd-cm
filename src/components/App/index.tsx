@@ -13,10 +13,10 @@ class App extends React.Component {
         <StyledApp>
           <Header />
           <p>
-            Spell area of effects
+            Spell area of effect
           </p>
           <Widget width={480} height={480}>
-            <Raster columns={10} rows={10} />
+            <Raster columns={20} rows={20} />
           </Widget>
         </StyledApp>
       </ThemeProvider>

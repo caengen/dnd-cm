@@ -1,3 +1,5 @@
+import { Coord } from "@App/types";
+
 export interface RasterProps {
   columns: number;
   rows: number;
@@ -8,6 +10,7 @@ export interface RasterState {
   spellActive: boolean;
   origin?: CellModel;
   target?: CellModel;
+  plotLine?: Coord[];
 }
 
 export interface CellModel {
