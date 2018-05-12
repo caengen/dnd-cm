@@ -11,6 +11,7 @@ export interface RasterState {
   origin?: CellModel;
   target?: CellModel;
   plotLine?: Coord[];
+  selectedMode: "monster" | "hero" | "ray" | "explosion" | "cone";
 }
 
 export interface CellModel {

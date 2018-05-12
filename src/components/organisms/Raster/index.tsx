@@ -1,8 +1,19 @@
 import * as React from "react";
 import { RasterProps, RasterState, CellModel } from "./types";
-import { Container, Cell, Grid } from "./styles";
+import { Container, Cell, Grid, Icon } from "./styles";
 import { Bresenham } from "@App/components/organisms/Raster/bresenham";
 import { Coord } from "@App/types";
+import Radio from 'material-ui/Radio';
+import monsterIconChecked from "@App/assets/radio/orc-head-checked.svg";
+import monsterIconUnchecked from "@App/assets/radio/orc-head-unchecked.svg";
+import heroIconChecked from "@App/assets/radio/black-knight-helm-checked.svg";
+import heroIconUnchecked from "@App/assets/radio/black-knight-helm-unchecked.svg";
+import rayIconChecked from "@App/assets/radio/fire-ray-checked.svg";
+import rayIconUnchecked from "@App/assets/radio/fire-ray-unchecked.svg";
+import ringIconChecked from "@App/assets/radio/fire-ring-checked.svg";
+import ringIconUnchecked from "@App/assets/radio/fire-ring-unchecked.svg";
+import coneIconChecked from "@App/assets/radio/corner-explosion-checked.svg";
+import coneIconUnchecked from "@App/assets/radio/corner-explosion-unchecked.svg";
 
 export class Raster extends React.Component<RasterProps, RasterState> {
   constructor(props: RasterProps) {
@@ -13,7 +24,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       spellActive: false,
       origin: undefined,
       target: undefined,
-      plotLine: undefined
+      plotLine: undefined,
+      selectedMode: "monster"
     }
   }
 
@@ -41,7 +53,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     this.setState({cells: initialCells})
   }
 
-  onCellMouseDown = (cell: CellModel) => {
+  handleCellMouseDown = (cell: CellModel) => {
     const { cells } = this.state;
 
     const newCell = { ...cell, state: "origin" } as CellModel;
@@ -56,7 +68,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     })
   }
 
-  onCellMouseUp = (cell: CellModel) => {
+  handleCellMouseUp = (cell: CellModel) => {
     let newCells = this.state.cells.slice();
 
     if (this.state.origin) {
@@ -73,7 +85,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     })
   }
 
-  onCellEnter = (cell: CellModel) => {
+  handleCellEnter = (cell: CellModel) => {
     console.log("onCellEnter");
     const { target, origin, cells } = this.state;
     
@@ -107,6 +119,9 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       plotLine: line
     });
   }
+
+
+  handleModeChange = (e: any) => this.setState({ selectedMode: e.target.value });
 
   resetPlotline = (cells: CellModel[][]) => {
     const { plotLine } = this.state;
@@ -144,9 +159,9 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     <Cell 
       key={cell.id} 
       state={cell.state} 
-      onMouseDown={() => this.onCellMouseDown(cell)} 
-      onMouseUp={() => this.onCellMouseUp(cell)}
-      onMouseEnter={() => this.onCellEnter(cell)}
+      onMouseDown={() => this.handleCellMouseDown(cell)} 
+      onMouseUp={() => this.handleCellMouseUp(cell)}
+      onMouseEnter={() => this.handleCellEnter(cell)}
     />
   );
 
@@ -158,6 +173,53 @@ export class Raster extends React.Component<RasterProps, RasterState> {
 
     return (
       <Container>
+        <div>
+          <Radio
+            checked={this.state.selectedMode === "monster"}
+            onChange={this.handleModeChange}
+            value="monster"
+            name="mode-radio"
+            aria-label="Monster"
+            icon={<Icon src={monsterIconUnchecked} alt="monster icon" />}
+            checkedIcon={<Icon src={monsterIconChecked} alt="monster icon checked" />}
+          />
+          <Radio
+            checked={this.state.selectedMode === "hero"}
+            onChange={this.handleModeChange}
+            value="hero"
+            name="mode-radio"
+            aria-label="Hero"
+            icon={<Icon src={heroIconUnchecked} alt="hero icon" />}
+            checkedIcon={<Icon src={heroIconChecked} alt="hero icon checked" />}
+          />
+          <Radio
+            checked={this.state.selectedMode === "ray"}
+            onChange={this.handleModeChange}
+            value="ray"
+            name="mode-radio"
+            aria-label="Ray"
+            icon={<Icon src={rayIconUnchecked} alt="spell ray icon" />}
+            checkedIcon={<Icon src={rayIconChecked} alt="spell ray icon checked" />}
+          />
+          <Radio
+            checked={this.state.selectedMode === "explosion"}
+            onChange={this.handleModeChange}
+            value="explosion"
+            name="mode-radio"
+            aria-label="Explosion"
+            icon={<Icon src={ringIconUnchecked} alt="spell explosion icon" />}
+            checkedIcon={<Icon src={ringIconChecked} alt="spell explosion icon checked" />}
+          />
+          <Radio
+            checked={this.state.selectedMode === "cone"}
+            onChange={this.handleModeChange}
+            value="cone"
+            name="mode-radio"
+            aria-label="Cone"
+            icon={<Icon src={coneIconUnchecked} alt="spell cone icon" />}
+            checkedIcon={<Icon src={coneIconChecked} alt="spell cone icon checked" />}
+          />
+        </div>
         <Grid columns={columns} rows={rows} onMouseLeave={this.resetGrid}>
           {cells.map(this.renderRow)}
         </Grid>
