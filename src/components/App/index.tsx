@@ -16,7 +16,7 @@ class App extends React.Component {
             Spell area of effect
           </p>
           <Widget width={"480px"} height={"480px"}>
-            <Raster columns={20} rows={20} />
+            <Raster columns={16} rows={16} />
           </Widget>
         </StyledApp>
       </ThemeProvider>

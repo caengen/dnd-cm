@@ -24,7 +24,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       origin: undefined,
       target: undefined,
       plotLine: undefined,
-      selectedMode: "monster"
+      selectedMode: "monster",
+      distance: 0
     }
   }
 
@@ -63,7 +64,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       spellActive: true,
       origin: newCell,
       cells: newCells,
-      target: undefined
+      target: undefined,
     })
   }
 
@@ -80,7 +81,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     this.setState({
       spellActive: false,
       origin: undefined,
-      cells: newCells
+      cells: newCells,
+      distance: 0
     })
   }
 
@@ -101,8 +103,10 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     this.resetPlotline(newCells);
 
     let line: Coord[] = [];
+    let distance = 0;
     if (origin && newTarget) {
       line = Bresenham.plotLine({x0: origin.col, y0: origin.row, x1: newTarget.col, y1: newTarget.row});
+      distance = this.calcDistance(line);
       line.pop();
       for (let coord of line) {
         newCells[coord.y][coord.x] = {
@@ -115,10 +119,12 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     this.setState({
       target: newTarget,
       cells: newCells,
-      plotLine: line
+      plotLine: line,
+      distance: distance
     });
   }
 
+  calcDistance = (line: Coord[]) => line.length * 5;
 
   handleModeChange = (e: any) => this.setState({ selectedMode: e.target.value });
 
@@ -227,7 +233,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
             <ResultGroupHeader>
               Distance
             </ResultGroupHeader>
-            <Result>15 feet</Result>
+            <Result>{this.state.distance} feet</Result>
           </ResultGroup>
         </TopBar>
         <Grid columns={columns} rows={rows} onMouseLeave={this.resetGrid}>
