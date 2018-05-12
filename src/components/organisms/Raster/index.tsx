@@ -1,9 +1,8 @@
 import * as React from "react";
 import { RasterProps, RasterState, CellModel } from "./types";
-import { Container, Cell, Grid, Icon } from "./styles";
+import { Container, Cell, Grid, Icon, ControlGroup, TopBar, ControlGroupHeader, ResultGroup, ResultGroupHeader, Result, SmallRadio } from "./styles";
 import { Bresenham } from "@App/components/organisms/Raster/bresenham";
 import { Coord } from "@App/types";
-import Radio from 'material-ui/Radio';
 import monsterIconChecked from "@App/assets/radio/orc-head-checked.svg";
 import monsterIconUnchecked from "@App/assets/radio/orc-head-unchecked.svg";
 import heroIconChecked from "@App/assets/radio/black-knight-helm-checked.svg";
@@ -173,53 +172,64 @@ export class Raster extends React.Component<RasterProps, RasterState> {
 
     return (
       <Container>
-        <div>
-          <Radio
-            checked={this.state.selectedMode === "monster"}
-            onChange={this.handleModeChange}
-            value="monster"
-            name="mode-radio"
-            aria-label="Monster"
-            icon={<Icon src={monsterIconUnchecked} alt="monster icon" />}
-            checkedIcon={<Icon src={monsterIconChecked} alt="monster icon checked" />}
-          />
-          <Radio
-            checked={this.state.selectedMode === "hero"}
-            onChange={this.handleModeChange}
-            value="hero"
-            name="mode-radio"
-            aria-label="Hero"
-            icon={<Icon src={heroIconUnchecked} alt="hero icon" />}
-            checkedIcon={<Icon src={heroIconChecked} alt="hero icon checked" />}
-          />
-          <Radio
-            checked={this.state.selectedMode === "ray"}
-            onChange={this.handleModeChange}
-            value="ray"
-            name="mode-radio"
-            aria-label="Ray"
-            icon={<Icon src={rayIconUnchecked} alt="spell ray icon" />}
-            checkedIcon={<Icon src={rayIconChecked} alt="spell ray icon checked" />}
-          />
-          <Radio
-            checked={this.state.selectedMode === "explosion"}
-            onChange={this.handleModeChange}
-            value="explosion"
-            name="mode-radio"
-            aria-label="Explosion"
-            icon={<Icon src={ringIconUnchecked} alt="spell explosion icon" />}
-            checkedIcon={<Icon src={ringIconChecked} alt="spell explosion icon checked" />}
-          />
-          <Radio
-            checked={this.state.selectedMode === "cone"}
-            onChange={this.handleModeChange}
-            value="cone"
-            name="mode-radio"
-            aria-label="Cone"
-            icon={<Icon src={coneIconUnchecked} alt="spell cone icon" />}
-            checkedIcon={<Icon src={coneIconChecked} alt="spell cone icon checked" />}
-          />
-        </div>
+        <TopBar>
+          <ControlGroup>
+            <ControlGroupHeader>Mode</ControlGroupHeader>
+            <div>
+              <SmallRadio
+                checked={this.state.selectedMode === "monster"}
+                onChange={this.handleModeChange}
+                value="monster"
+                name="mode-radio"
+                aria-label="Monster"
+                icon={<Icon src={monsterIconUnchecked} alt="monster icon" />}
+                checkedIcon={<Icon src={monsterIconChecked} alt="monster icon checked" />}
+              />
+              <SmallRadio
+                checked={this.state.selectedMode === "hero"}
+                onChange={this.handleModeChange}
+                value="hero"
+                name="mode-radio"
+                aria-label="Hero"
+                icon={<Icon src={heroIconUnchecked} alt="hero icon" />}
+                checkedIcon={<Icon src={heroIconChecked} alt="hero icon checked" />}
+              />
+              <SmallRadio
+                checked={this.state.selectedMode === "ray"}
+                onChange={this.handleModeChange}
+                value="ray"
+                name="mode-radio"
+                aria-label="Ray"
+                icon={<Icon src={rayIconUnchecked} alt="spell ray icon" />}
+                checkedIcon={<Icon src={rayIconChecked} alt="spell ray icon checked" />}
+              />
+              <SmallRadio
+                checked={this.state.selectedMode === "explosion"}
+                onChange={this.handleModeChange}
+                value="explosion"
+                name="mode-radio"
+                aria-label="Explosion"
+                icon={<Icon src={ringIconUnchecked} alt="spell explosion icon" />}
+                checkedIcon={<Icon src={ringIconChecked} alt="spell explosion icon checked" />}
+              />
+              <SmallRadio
+                checked={this.state.selectedMode === "cone"}
+                onChange={this.handleModeChange}
+                value="cone"
+                name="mode-radio"
+                aria-label="Cone"
+                icon={<Icon src={coneIconUnchecked} alt="spell cone icon" />}
+                checkedIcon={<Icon src={coneIconChecked} alt="spell cone icon checked" />}
+              />
+            </div>
+          </ControlGroup>
+          <ResultGroup>
+            <ResultGroupHeader>
+              Distance
+            </ResultGroupHeader>
+            <Result>15 feet</Result>
+          </ResultGroup>
+        </TopBar>
         <Grid columns={columns} rows={rows} onMouseLeave={this.resetGrid}>
           {cells.map(this.renderRow)}
         </Grid>
