@@ -46,6 +46,13 @@ export const Cell = styled<CellProps, 'div'>('div')`
       }
     }
   };
+  
+  img {
+    cursor: pointer;
+    user-select: none;
+    pointer-events: none;
+    height: .7em;
+  }
 `;
 
 
@@ -57,7 +64,7 @@ export const TopBar = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  border-bottom: 1px solid black;
+  border-bottom: 2px solid #dfdb10;
   background-color: yellow;
   padding: .5rem;
   font-family: "Nodesto Caps Condensed";

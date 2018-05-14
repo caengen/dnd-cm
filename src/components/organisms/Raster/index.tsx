@@ -1,5 +1,6 @@
 import * as React from "react";
-import { RasterProps, RasterState, CellModel, SpellModeTexts } from "./types";
+import { RasterProps, RasterState, CellModel, SpellModeTexts, CreatureCell } from "./types";
+import RandomCreature from "./RandomCreature";
 import { Container, Cell, Grid, Icon, ControlGroup, TopBar, ControlGroupHeader, ResultGroup, ResultGroupHeader, Result, SmallRadio } from "./styles";
 import { Bresenham } from "@App/components/organisms/Raster/bresenham";
 import { Coord } from "@App/types";
@@ -33,7 +34,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       target: undefined,
       plotLine: undefined,
       selectedMode: "monster",
-      distance: 0
+      distance: 0,
+      creatures: []
     }
   }
 
@@ -59,6 +61,27 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       initialCells.push(this.columns(i));
     }
     this.setState({cells: initialCells})
+  }
+
+  handleCellClick = (cell: CellModel) => {
+    const { selectedMode } = this.state;
+
+    if (selectedMode !== "monster" && selectedMode !== "hero") return;
+
+    let creature = {} as CreatureCell;
+    if (selectedMode === "monster") {
+      creature = {
+        position: {x: cell.col, y: cell.row},
+        Element: <RandomCreature type="monster" />
+      };
+    }
+
+    this.setState({
+      creatures: [
+        ...this.state.creatures,
+        creature
+      ]
+    });
   }
 
   handleCellMouseDown = (cell: CellModel) => {
@@ -101,7 +124,6 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   handleCellEnter = (cell: CellModel) => {
     if (this.state.selectedMode !== "ray") return;
 
-    console.log("onCellEnter");
     const { target, origin, cells } = this.state;
     
     if (origin && cell.id === origin.id) return;
@@ -136,10 +158,6 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       plotLine: line,
       distance: distance
     });
-  }
-
-  handleClick = () => {
-
   }
 
   calcDistance = (line: Coord[]) => line.length * 5;
@@ -178,6 +196,11 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     })
   }
 
+  getCreatureInCell = (cell: CellModel) => {
+    const creature = this.state.creatures.find(c => c.position.x === cell.col && c.position.y === cell.row);
+    return creature ? creature.Element : null;
+  }
+
   renderCell = (cell: CellModel) => (
     <Cell 
       key={cell.id} 
@@ -185,7 +208,10 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       onMouseDown={() => this.handleCellMouseDown(cell)} 
       onMouseUp={() => this.handleCellMouseUp(cell)}
       onMouseEnter={() => this.handleCellEnter(cell)}
-    />
+      onClick={() => this.handleCellClick(cell)}
+    >
+    {this.getCreatureInCell(cell)}
+    </Cell>
   );
 
   renderRow = (row: CellModel[]) => row.map(this.renderCell);

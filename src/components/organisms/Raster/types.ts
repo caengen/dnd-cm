@@ -13,6 +13,12 @@ export interface RasterState {
   plotLine?: Coord[];
   selectedMode: SpellMode;
   distance: number;
+  creatures: CreatureCell[];
+}
+
+export interface CreatureCell {
+  Element: JSX.Element;
+  position: Coord;
 }
 
 export type SpellMode = "monster" | "hero" | "ray" | "explosion" | "cone";
