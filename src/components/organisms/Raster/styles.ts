@@ -19,6 +19,7 @@ export const Grid = styled<GridProps, "div">("div")`
   grid-template-columns: repeat(${p => p.columns}, 1fr);
   grid-template-rows: repeat(${p => p.rows}, 1fr);
   grid-gap: 2px;
+  background-color: #676500;
 `;
 
 interface CellProps {
@@ -36,7 +37,7 @@ export const Cell = styled<CellProps, 'div'>('div')`
   background-color: ${p => {
       switch (p.state) {
         case "normal":
-          return "lightgrey";
+          return "#929000";
         case "origin":
           return "blue";
         case "target":
@@ -46,7 +47,7 @@ export const Cell = styled<CellProps, 'div'>('div')`
       }
     }
   };
-  
+
   img {
     cursor: pointer;
     user-select: none;
