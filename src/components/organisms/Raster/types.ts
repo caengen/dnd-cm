@@ -11,8 +11,13 @@ export interface RasterState {
   origin?: CellModel;
   target?: CellModel;
   plotLine?: Coord[];
-  selectedMode: "monster" | "hero" | "ray" | "explosion" | "cone";
+  selectedMode: SpellMode;
   distance: number;
+}
+
+export type SpellMode = "monster" | "hero" | "ray" | "explosion" | "cone";
+export type SpellModeTexts = {
+  [key in SpellMode]: string;
 }
 
 export interface CellModel {

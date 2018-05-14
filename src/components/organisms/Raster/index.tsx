@@ -1,5 +1,5 @@
 import * as React from "react";
-import { RasterProps, RasterState, CellModel } from "./types";
+import { RasterProps, RasterState, CellModel, SpellModeTexts } from "./types";
 import { Container, Cell, Grid, Icon, ControlGroup, TopBar, ControlGroupHeader, ResultGroup, ResultGroupHeader, Result, SmallRadio } from "./styles";
 import { Bresenham } from "@App/components/organisms/Raster/bresenham";
 import { Coord } from "@App/types";
@@ -15,6 +15,14 @@ import coneIconChecked from "@App/assets/radio/corner-explosion-checked.svg";
 import coneIconUnchecked from "@App/assets/radio/corner-explosion-unchecked.svg";
 
 export class Raster extends React.Component<RasterProps, RasterState> {
+  readonly ModeStrings: SpellModeTexts = {
+    monster: "Place a Monster",
+    hero: "Place a Hero",
+    ray: "Drag the Fire Ray",
+    explosion: "Drag the Explosion",
+    cone: "Drag the Cone"
+  };
+
   constructor(props: RasterProps) {
     super(props);
 
@@ -54,6 +62,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   }
 
   handleCellMouseDown = (cell: CellModel) => {
+    if (this.state.selectedMode !== "ray") return;
+
     const { cells } = this.state;
 
     const newCell = { ...cell, state: "origin" } as CellModel;
@@ -69,6 +79,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   }
 
   handleCellMouseUp = (cell: CellModel) => {
+    if (this.state.selectedMode !== "ray") return;
+
     let newCells = this.state.cells.slice();
 
     if (this.state.origin) {
@@ -87,6 +99,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   }
 
   handleCellEnter = (cell: CellModel) => {
+    if (this.state.selectedMode !== "ray") return;
+
     console.log("onCellEnter");
     const { target, origin, cells } = this.state;
     
@@ -122,6 +136,10 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       plotLine: line,
       distance: distance
     });
+  }
+
+  handleClick = () => {
+
   }
 
   calcDistance = (line: Coord[]) => line.length * 5;
@@ -174,13 +192,15 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     
   render() {
     const { rows, columns } = this.props;
-    const {cells} = this.state;
+    const { cells, selectedMode } = this.state;
 
     return (
       <Container>
         <TopBar>
           <ControlGroup>
-            <ControlGroupHeader>Mode</ControlGroupHeader>
+            <ControlGroupHeader>
+              {this.ModeStrings[selectedMode]}
+            </ControlGroupHeader>
             <div>
               <SmallRadio
                 checked={this.state.selectedMode === "monster"}
