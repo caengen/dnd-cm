@@ -7,6 +7,12 @@ export interface BresenhamsLineArgs {
   y1: number;
 }
 
+export interface BresenhamsCircleArgs {
+  x0: number;
+  y0: number;
+  r: number;
+}
+
 export class Bresenham {
   static plotLine = ({x0,y0,x1,y1}: BresenhamsLineArgs) => {
     let dots: Coord[] = [];
@@ -37,5 +43,26 @@ export class Bresenham {
     }
   
     return dots;
+  }
+
+  plotCircle = ({x0, y0, r}: BresenhamsCircleArgs) => {
+    let dots: Coord[] = [];
+    let x = -r, y = 0, err = 2 - 2 * r; /* II. Quadrant */ 
+
+    do {
+        dots.push({x: x0 - x, y: y0 + y}); /*   I. Quadrant */
+        dots.push({x: x0 - y, y: y0 - x}); /*  II. Quadrant */
+        dots.push({x: x0 + x, y: y0 - y}); /* III. Quadrant */
+        dots.push({x: x0 + y, y: y0 + x}); /*  IV. Quadrant */
+        r = err;
+        if (r <= y) {
+          /* e_xy+e_y < 0 */
+          err += ++y * 2 + 1;
+        }
+        if (r > x || err > y) {
+          /* e_xy+e_x > 0 or no 2nd y-step */
+          err += ++x * 2 + 1;
+        }
+    } while (x < 0);
   }
 }
