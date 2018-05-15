@@ -10,7 +10,7 @@ export interface RasterState {
   spellActive: boolean;
   origin?: CellModel;
   target?: CellModel;
-  plotLine?: Coord[];
+  previousHitCells?: Coord[];
   selectedMode: SpellMode;
   distance: number;
   creatures: CreatureCell[];

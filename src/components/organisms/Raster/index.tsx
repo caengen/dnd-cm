@@ -32,7 +32,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       spellActive: false,
       origin: undefined,
       target: undefined,
-      plotLine: undefined,
+      previousHitCells: undefined,
       selectedMode: "monster",
       distance: 0,
       creatures: []
@@ -85,9 +85,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   }
 
   handleCellMouseDown = (cell: CellModel) => {
-    if (this.state.selectedMode !== "ray") return;
-
-    const { cells } = this.state;
+    const { selectedMode, cells } = this.state;
+    if (selectedMode !== "ray" && selectedMode !== "explosion") return;
 
     const newCell = { ...cell, state: "origin" } as CellModel;
     let newCells = cells.slice();
@@ -102,7 +101,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   }
 
   handleCellMouseUp = (cell: CellModel) => {
-    if (this.state.selectedMode !== "ray") return;
+    const { selectedMode } = this.state;
+    if (selectedMode !== "ray" && selectedMode !== "explosion") return;
 
     let newCells = this.state.cells.slice();
 
@@ -111,7 +111,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       newCells[resetOrigin.row][resetOrigin.col] = resetOrigin;
     }
 
-    this.resetPlotline(newCells);
+    this.resetHitCells(newCells);
 
     this.setState({
       spellActive: false,
@@ -122,10 +122,9 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   }
 
   handleCellEnter = (cell: CellModel) => {
-    if (this.state.selectedMode !== "ray") return;
+    const { target, origin, cells, selectedMode } = this.state;
 
-    const { target, origin, cells } = this.state;
-    
+    if (selectedMode !== "ray" && selectedMode !== "explosion") return;
     if (origin && cell.id === origin.id) return;
 
     const newTarget = { ...cell, state: "target" } as CellModel;
@@ -136,38 +135,49 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       newCells[target.row][target.col] = {...target, state: "normal"} as CellModel;
     }
 
-    this.resetPlotline(newCells);
+    this.resetHitCells(newCells);
 
     let line: Coord[] = [];
     let distance = 0;
     if (origin && newTarget) {
-      line = Bresenham.plotLine({x0: origin.col, y0: origin.row, x1: newTarget.col, y1: newTarget.row});
-      distance = this.calcDistance(line);
-      line.pop();
-      for (let coord of line) {
-        newCells[coord.y][coord.x] = {
-          ...newCells[coord.y][coord.x],
-          state: "hit"
-        }
+      if (selectedMode === "ray") {
+        line = Bresenham.plotLine({x0: origin.col, y0: origin.row, x1: newTarget.col, y1: newTarget.row});
+        distance = this.calcDistance(line);
+        line.pop();
+        this.setCellsAsHit(newCells, line);
+      } else if (selectedMode === "explosion") {
+        const radius = Math.max(Math.abs(origin.col - newTarget.col), Math.abs(origin.row - newTarget.row));
+        line = Bresenham.plotCircle({ x0: origin.col, y0: origin.row, r: radius })
+        distance = radius * 5;
+        this.setCellsAsHit(newCells, line);
       }
     }
     
     this.setState({
       target: newTarget,
       cells: newCells,
-      plotLine: line,
+      previousHitCells: line,
       distance: distance
     });
+  }
+
+  setCellsAsHit = (cells: CellModel[][], coords: Coord[]) => {
+    for (let coord of coords) {
+      cells[coord.y][coord.x] = {
+        ...cells[coord.y][coord.x],
+        state: "hit"
+      }
+    }
   }
 
   calcDistance = (line: Coord[]) => line.length * 5;
 
   handleModeChange = (e: any) => this.setState({ selectedMode: e.target.value });
 
-  resetPlotline = (cells: CellModel[][]) => {
-    const { plotLine } = this.state;
+  resetHitCells = (cells: CellModel[][]) => {
+    const { previousHitCells } = this.state;
     
-    for (let coord of plotLine || []) {
+    for (let coord of previousHitCells || []) {
       cells[coord.y][coord.x] = {
         ...cells[coord.y][coord.x],
         state: "normal"
@@ -176,7 +186,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
 
     return cells;
   }
-  
+
   resetGrid = () => {
     const { cells, target, origin } = this.state;
 
@@ -188,7 +198,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       newCells[origin.row][origin.col] = {...origin, state: "normal"};
     }
 
-    this.resetPlotline(newCells);
+    this.resetHitCells(newCells);
 
     this.setState({
       target: undefined,

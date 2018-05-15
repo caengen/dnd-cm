@@ -45,7 +45,7 @@ export class Bresenham {
     return dots;
   }
 
-  plotCircle = ({x0, y0, r}: BresenhamsCircleArgs) => {
+  static plotCircle = ({x0, y0, r}: BresenhamsCircleArgs) => {
     let dots: Coord[] = [];
     let x = -r, y = 0, err = 2 - 2 * r; /* II. Quadrant */ 
 
@@ -64,5 +64,7 @@ export class Bresenham {
           err += ++x * 2 + 1;
         }
     } while (x < 0);
+
+    return dots;
   }
 }
