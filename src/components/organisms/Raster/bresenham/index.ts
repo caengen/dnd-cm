@@ -45,7 +45,7 @@ export class Bresenham {
     return dots;
   }
 
-  static plotFilledCircle = ({x0, y0, r}: BresenhamsCircleArgs) => {
+  static plotCircle = ({x0, y0, r}: BresenhamsCircleArgs) => {
     let dots: Coord[] = [];
     let x = -r, y = 0, err = 2 - 2 * r; /* II. Quadrant */ 
 
@@ -66,7 +66,39 @@ export class Bresenham {
         }
     } while (x < 0);
 
-    console.log(dots)
     return dots;
+  }
+
+  /* Triangle
+  *   C    B
+  *   |   /
+  *   |  /
+  *   | /
+  *   A
+  */
+
+  static plotTriangle = (pivot: Coord, point: Coord) => {
+    let dots: Coord[] = [];
+    const angle = -60 * Math.PI / 180;
+
+    const sin = Math.sin(angle), cos = Math.cos(angle);
+
+    // translate so pivot point is the origin
+    const transX = point.x - pivot.x;
+    const transY = point.y - pivot.y;
+
+    // rotated point translated
+    const newTransX = transX * cos - transY * sin;
+    const newTransY = transX * sin + transY * cos;
+
+    // translate back
+    const rotatedX = Math.floor(newTransX + pivot.x);
+    const rotatedY = Math.floor(newTransY + pivot.y);
+    
+    const ca = Bresenham.plotLine({x0: pivot.x, y0: pivot.y, x1: point.x, y1: point.y});
+    const cb = Bresenham.plotLine({x0: pivot.x, y0: pivot.y, x1: rotatedX, y1: rotatedY});
+    const ab = Bresenham.plotLine({x0: point.x, y0: point.y, x1: rotatedX, y1: rotatedY});
+
+    return dots.concat(ca).concat(cb).concat(ab);
   }
 }

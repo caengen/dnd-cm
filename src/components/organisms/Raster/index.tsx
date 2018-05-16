@@ -19,7 +19,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   readonly ModeStrings: SpellModeTexts = {
     monster: "Place a Monster",
     hero: "Place a Hero",
-    ray: "Drag the Fire Ray",
+    ray: "Drag the Beam",
     explosion: "Drag the Explosion",
     cone: "Drag the Cone"
   };
@@ -68,13 +68,10 @@ export class Raster extends React.Component<RasterProps, RasterState> {
 
     if (selectedMode !== "monster" && selectedMode !== "hero") return;
 
-    let creature = {} as CreatureCell;
-    if (selectedMode === "monster") {
-      creature = {
-        position: {x: cell.col, y: cell.row},
-        Element: <RandomCreature type="monster" />
-      };
-    }
+    const creature = {
+      position: {x: cell.col, y: cell.row},
+      Element: <RandomCreature type={selectedMode} />
+    } as CreatureCell;
 
     this.setState({
       creatures: [
@@ -86,7 +83,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
 
   handleCellMouseDown = (cell: CellModel) => {
     const { selectedMode, cells } = this.state;
-    if (selectedMode !== "ray" && selectedMode !== "explosion") return;
+    if (selectedMode !== "ray" && selectedMode !== "explosion" && selectedMode != "cone") return;
 
     const newCell = { ...cell, state: "origin" } as CellModel;
     let newCells = cells.slice();
@@ -102,7 +99,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
 
   handleCellMouseUp = (cell: CellModel) => {
     const { selectedMode } = this.state;
-    if (selectedMode !== "ray" && selectedMode !== "explosion") return;
+    if (selectedMode !== "ray" && selectedMode !== "explosion" && selectedMode != "cone") return;
 
     let newCells = this.state.cells.slice();
 
@@ -124,7 +121,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   handleCellEnter = (cell: CellModel) => {
     const { target, origin, cells, selectedMode } = this.state;
 
-    if (selectedMode !== "ray" && selectedMode !== "explosion") return;
+    if (selectedMode !== "ray" && selectedMode !== "explosion" && selectedMode != "cone") return;
     if (origin && cell.id === origin.id) return;
 
     const newTarget = { ...cell, state: "target" } as CellModel;
@@ -143,14 +140,16 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       if (selectedMode === "ray") {
         line = Bresenham.plotLine({x0: origin.col, y0: origin.row, x1: newTarget.col, y1: newTarget.row});
         distance = this.calcDistance(line);
-        line.pop();
-        this.setCellsAsHit(newCells, line);
+        line.pop(); // to not overwrite the red marker on target
       } else if (selectedMode === "explosion") {
         const radius = Math.max(Math.abs(origin.col - newTarget.col), Math.abs(origin.row - newTarget.row));
-        line = Bresenham.plotFilledCircle({ x0: origin.col, y0: origin.row, r: radius })
+        line = Bresenham.plotCircle({ x0: origin.col, y0: origin.row, r: radius })
         distance = radius * 5;
-        this.setCellsAsHit(newCells, line);
+      } else if (selectedMode === "cone") {
+        line = Bresenham.plotTriangle({x: origin.col, y: origin.row}, {x: newTarget.col, y: newTarget.row})
       }
+
+      this.setCellsAsHit(newCells, line);
     }
     
     this.setState({

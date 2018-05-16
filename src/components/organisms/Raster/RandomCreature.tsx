@@ -10,7 +10,12 @@ import werewolf from "@App/assets/monsters/werewolf.svg";
 const monsters = [beholder, femaleVampire, gargoyle, goblin, orc, werewolf];
 
 import knight from "@App/assets/heroes/black-knight-helm.svg";
-const heroes = [knight];
+import barbarian from "@App/assets/heroes/barbarian.svg";
+import monk from "@App/assets/heroes/monk-face.svg";
+import robe from "@App/assets/heroes/robe.svg";
+import swordman from "@App/assets/heroes/swordman.svg";
+import swordwoman from "@App/assets/heroes/swordwoman.svg";
+const heroes = [ knight, barbarian, monk, robe, swordman, swordwoman ];
 
 export interface RandomCreatureProps {
   type: "hero" | "monster";
