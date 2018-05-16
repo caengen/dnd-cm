@@ -45,7 +45,7 @@ export class Bresenham {
     return dots;
   }
 
-  static plotCircle = ({x0, y0, r}: BresenhamsCircleArgs) => {
+  static plotFilledCircle = ({x0, y0, r}: BresenhamsCircleArgs) => {
     let dots: Coord[] = [];
     let x = -r, y = 0, err = 2 - 2 * r; /* II. Quadrant */ 
 
@@ -54,6 +54,7 @@ export class Bresenham {
         dots.push({x: x0 - y, y: y0 - x}); /*  II. Quadrant */
         dots.push({x: x0 + x, y: y0 - y}); /* III. Quadrant */
         dots.push({x: x0 + y, y: y0 + x}); /*  IV. Quadrant */
+        
         r = err;
         if (r <= y) {
           /* e_xy+e_y < 0 */
@@ -65,6 +66,7 @@ export class Bresenham {
         }
     } while (x < 0);
 
+    console.log(dots)
     return dots;
   }
 }

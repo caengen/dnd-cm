@@ -147,7 +147,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
         this.setCellsAsHit(newCells, line);
       } else if (selectedMode === "explosion") {
         const radius = Math.max(Math.abs(origin.col - newTarget.col), Math.abs(origin.row - newTarget.row));
-        line = Bresenham.plotCircle({ x0: origin.col, y0: origin.row, r: radius })
+        line = Bresenham.plotFilledCircle({ x0: origin.col, y0: origin.row, r: radius })
         distance = radius * 5;
         this.setCellsAsHit(newCells, line);
       }
@@ -163,11 +163,18 @@ export class Raster extends React.Component<RasterProps, RasterState> {
 
   setCellsAsHit = (cells: CellModel[][], coords: Coord[]) => {
     for (let coord of coords) {
+      if (this.outOfBounds(coord)) continue;
+
       cells[coord.y][coord.x] = {
         ...cells[coord.y][coord.x],
         state: "hit"
       }
     }
+  }
+
+  outOfBounds = (coord: Coord) => {
+    const { columns, rows } = this.props;
+    return coord.x < 0 || coord.y < 0 || coord.x >=  columns || coord.y >= rows;
   }
 
   calcDistance = (line: Coord[]) => line.length * 5;
@@ -178,6 +185,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     const { previousHitCells } = this.state;
     
     for (let coord of previousHitCells || []) {
+      if (this.outOfBounds(coord)) continue;
+
       cells[coord.y][coord.x] = {
         ...cells[coord.y][coord.x],
         state: "normal"
