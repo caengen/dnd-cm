@@ -15,20 +15,47 @@ import monk from "@App/assets/heroes/monk-face.svg";
 import robe from "@App/assets/heroes/robe.svg";
 import swordman from "@App/assets/heroes/swordman.svg";
 import swordwoman from "@App/assets/heroes/swordwoman.svg";
+import styled from 'styled-components';
 const heroes = [ knight, barbarian, monk, robe, swordman, swordwoman ];
 
 export interface RandomCreatureProps {
   type: "hero" | "monster";
+  tag?: number;
 }
+
+const Container = styled.div`
+  display: flex;
+  position: relative;
+`;
+
+interface TagProps {
+  color: "red" | "aliceblue";
+}
+const Tag = styled<TagProps, "span">("span")`
+  font-size: .5em;
+  line-height: 0;
+  position: absolute;
+  right: -1px;
+  bottom: 7px;
+  color: ${p => p.color};
+`;
 
 export default class RandomCreature extends React.Component<RandomCreatureProps, any> {
   render() {
+    const { type, tag } = this.props;
+
     let icon = "";
-    if (this.props.type === "monster") {
+    if (type === "monster") {
       icon = monsters[Math.floor(Math.random() * monsters.length)];
     } else {
       icon = heroes[Math.floor(Math.random() * heroes.length)];
     }
-    return <Icon src={icon} alt={`creature icon`} />;
+    const color = type === "monster" ? "red" : "aliceblue";
+    return (
+      <Container>
+        <Tag color={color}>{tag}</Tag>
+        <Icon src={icon} alt={`creature icon`} />
+      </Container>
+    );
   }
 }

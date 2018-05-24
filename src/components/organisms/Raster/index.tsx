@@ -35,7 +35,9 @@ export class Raster extends React.Component<RasterProps, RasterState> {
       previousHitCells: undefined,
       selectedMode: "monster",
       distance: 0,
-      creatures: []
+      creatures: [],
+      nextHero: 1,
+      nextMonster: 1
     }
   }
 
@@ -68,9 +70,17 @@ export class Raster extends React.Component<RasterProps, RasterState> {
 
     if (selectedMode !== "monster" && selectedMode !== "hero") return;
 
+    let tag = 0;
+    if (selectedMode === "monster") {
+      tag = this.state.nextMonster;
+      this.setState({ nextMonster: tag + 1 });
+    } else {
+      tag = this.state.nextHero;
+      this.setState({ nextHero: tag + 1 });
+    }
     const creature = {
       position: {x: cell.col, y: cell.row},
-      Element: <RandomCreature type={selectedMode} />
+      Element: <RandomCreature type={selectedMode} tag={tag} />
     } as CreatureCell;
 
     this.setState({

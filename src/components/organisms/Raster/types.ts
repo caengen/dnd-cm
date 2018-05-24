@@ -14,6 +14,8 @@ export interface RasterState {
   selectedMode: SpellMode;
   distance: number;
   creatures: CreatureCell[];
+  nextHero: number;
+  nextMonster: number;
 }
 
 export interface CreatureCell {
