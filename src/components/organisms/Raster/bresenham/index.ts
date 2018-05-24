@@ -1,67 +1,57 @@
 import { Coord } from "@App/types";
 
-export interface BresenhamsLineArgs {
-  x0: number;
-  y0: number;
-  x1: number;
-  y1: number;
-}
-
-export interface BresenhamsCircleArgs {
-  x0: number;
-  y0: number;
-  r: number;
+interface TrianglePlot {
+  points: Coord[];
+  distance: number;
 }
 
 export class Bresenham {
-  static plotLine = ({x0,y0,x1,y1}: BresenhamsLineArgs) => {
+  static plotLine = (origin: Coord, target: Coord) => {
     let dots: Coord[] = [];
   
-    let dx = Math.abs(x1 - x0);
-    let dy = Math.abs(y1 - y0);
-    let sx = (x0 < x1) ? 1 : -1;
-    let sy = (y0 < y1) ? 1 : -1;
+    let dx = Math.abs(target.x - origin.x);
+    let dy = Math.abs(target.y - origin.y);
+    let sx = (origin.x < target.x) ? 1 : -1;
+    let sy = (origin.y < target.y) ? 1 : -1;
     let err = dx - dy;
   
     // Not interested in origin
     //dots.push({x: x0, y: y0});
   
-    while(!((x0 == x1) && (y0 == y1))) {
+    while(!((origin.x == target.x) && (origin.y == target.y))) {
       let e2 = err << 1;
   
       if (e2 > -dy) {
         err -= dy;
-        x0 += sx;
+        origin.x += sx;
       }
   
       if (e2 < dx) {
         err += dx;
-        y0 += sy;
+        origin.y += sy;
       }
   
-      dots.push({ x: x0, y: y0 });
+      dots.push({ x: origin.x, y: origin.y });
     }
   
     return dots;
   }
 
-  static plotCircle = ({x0, y0, r}: BresenhamsCircleArgs) => {
+  static plotCircle = (origin: Coord, r: number) => {
     let dots: Coord[] = [];
     let x = -r, y = 0, err = 2 - 2 * r; /* II. Quadrant */ 
 
     do {
-        dots.push({x: x0 - x, y: y0 + y}); /*   I. Quadrant */
-        dots.push({x: x0 - y, y: y0 - x}); /*  II. Quadrant */
-        dots.push({x: x0 + x, y: y0 - y}); /* III. Quadrant */
-        dots.push({x: x0 + y, y: y0 + x}); /*  IV. Quadrant */
+        dots.push({x: origin.x - x, y: origin.y + y}); /*   I. Quadrant */
+        dots.push({x: origin.x - y, y: origin.y - x}); /*  II. Quadrant */
+        dots.push({x: origin.x + x, y: origin.y - y}); /* III. Quadrant */
+        dots.push({x: origin.x + y, y: origin.y + x}); /*  IV. Quadrant */
         
         r = err;
         if (r <= y) {
-          /* e_xy+e_y < 0 */
           err += ++y * 2 + 1;
         }
         if (r > x || err > y) {
-          /* e_xy+e_x > 0 or no 2nd y-step */
           err += ++x * 2 + 1;
         }
     } while (x < 0);
@@ -69,17 +59,13 @@ export class Bresenham {
     return dots;
   }
 
-  /* Triangle
-  *   C    B
-  *   |   /
-  *   |  /
-  *   | /
-  *   A
-  */
-
-  static plotTriangle = (pivot: Coord, point: Coord) => {
+  /**
+   * A cone’s width at a given point along its length is equal to that point’s
+   * distance from the point of origin.
+   */
+  static plotTriangle = (pivot: Coord, point: Coord): TrianglePlot => {
     let dots: Coord[] = [];
-    const angle = -60 * Math.PI / 180;
+    const angle = -45 * Math.PI / 180;
 
     const sin = Math.sin(angle), cos = Math.cos(angle);
 
@@ -95,10 +81,13 @@ export class Bresenham {
     const rotatedX = Math.floor(newTransX + pivot.x);
     const rotatedY = Math.floor(newTransY + pivot.y);
     
-    const ca = Bresenham.plotLine({x0: pivot.x, y0: pivot.y, x1: point.x, y1: point.y});
-    const cb = Bresenham.plotLine({x0: pivot.x, y0: pivot.y, x1: rotatedX, y1: rotatedY});
-    const ab = Bresenham.plotLine({x0: point.x, y0: point.y, x1: rotatedX, y1: rotatedY});
+    const pivotToPoint = Bresenham.plotLine({x: pivot.x, y: pivot.y}, {x: point.x, y: point.y});
+    const pivotToNew = Bresenham.plotLine({x: pivot.x, y: pivot.y}, {x: rotatedX, y: rotatedY});
+    const newToPoint = Bresenham.plotLine({x: point.x, y: point.y}, {x: rotatedX, y: rotatedY});
 
-    return dots.concat(ca).concat(cb).concat(ab);
+    return {
+      points: dots.concat(pivotToPoint).concat(pivotToNew).concat(newToPoint),
+      distance: pivotToPoint.length * 5
+    };
   }
 }

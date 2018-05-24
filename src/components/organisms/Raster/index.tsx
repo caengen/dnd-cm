@@ -138,15 +138,17 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     let distance = 0;
     if (origin && newTarget) {
       if (selectedMode === "ray") {
-        line = Bresenham.plotLine({x0: origin.col, y0: origin.row, x1: newTarget.col, y1: newTarget.row});
+        line = Bresenham.plotLine({x: origin.col, y: origin.row}, {x: newTarget.col, y: newTarget.row});
         distance = this.calcDistance(line);
         line.pop(); // to not overwrite the red marker on target
       } else if (selectedMode === "explosion") {
         const radius = Math.max(Math.abs(origin.col - newTarget.col), Math.abs(origin.row - newTarget.row));
-        line = Bresenham.plotCircle({ x0: origin.col, y0: origin.row, r: radius })
+        line = Bresenham.plotCircle({ x: origin.col, y: origin.row}, radius);
         distance = radius * 5;
       } else if (selectedMode === "cone") {
-        line = Bresenham.plotTriangle({x: origin.col, y: origin.row}, {x: newTarget.col, y: newTarget.row})
+        const triangle = Bresenham.plotTriangle({x: origin.col, y: origin.row}, {x: newTarget.col, y: newTarget.row})
+        line = triangle.points;
+        distance = triangle.distance;
       }
 
       this.setCellsAsHit(newCells, line);
