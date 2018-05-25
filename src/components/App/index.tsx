@@ -3,8 +3,7 @@ import { ThemeProvider } from 'styled-components';
 import { StyledApp } from './style';
 import theme from './theme';
 import Header from '@App/components/organisms/Header';
-import { Raster } from '@App/components/organisms/Raster';
-import { Widget } from '@App/components/organisms/Widget';
+import { Raster, Widget } from '@App/components';
 
 class App extends React.Component {
   public render() {
