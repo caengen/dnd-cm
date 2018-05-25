@@ -56,7 +56,6 @@ export const Cell = styled<CellProps, 'div'>('div')`
   }
 `;
 
-
 export const Icon = styled.img`
   height: 2em;
 `;

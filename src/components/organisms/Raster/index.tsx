@@ -1,6 +1,5 @@
 import * as React from "react";
 import { RasterProps, RasterState, CellModel, SpellModeTexts, CreatureCell } from "./types";
-import RandomCreature from "./RandomCreature";
 import { Container, Cell, Grid, Icon, ControlGroup, TopBar, ControlGroupHeader, ResultGroup, ResultGroupHeader, Result, SmallRadio } from "./styles";
 import { Bresenham } from "@App/components/organisms/Raster/bresenham";
 import { Coord } from "@App/types";
@@ -14,6 +13,7 @@ import ringIconChecked from "@App/assets/radio/fire-ring-checked.svg";
 import ringIconUnchecked from "@App/assets/radio/fire-ring-unchecked.svg";
 import coneIconChecked from "@App/assets/radio/corner-explosion-checked.svg";
 import coneIconUnchecked from "@App/assets/radio/corner-explosion-unchecked.svg";
+import { RandomCreature } from "@App/components";
 
 export class Raster extends React.Component<RasterProps, RasterState> {
   readonly ModeStrings: SpellModeTexts = {
