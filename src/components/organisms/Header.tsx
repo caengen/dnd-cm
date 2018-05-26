@@ -23,6 +23,8 @@ const ScaryTitle = styled.h1`
   font-family: "Nodesto Caps Condensed";
   text-transform: uppercase;
   font-size: 2.5rem;
+  letter-spacing: 1px;
+  
   span {
     font-size: 2rem;
     padding: 0 .5rem;

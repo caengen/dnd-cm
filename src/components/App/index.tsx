@@ -3,6 +3,8 @@ import { ThemeProvider } from 'styled-components';
 import { StyledApp } from './style';
 import theme from './theme';
 import Header from '@App/components/organisms/Header';
+import { Raster } from '@App/components/organisms/Raster';
+import { Widget } from '@App/components/organisms/Widget';
 
 class App extends React.Component {
   public render() {
@@ -11,8 +13,11 @@ class App extends React.Component {
         <StyledApp>
           <Header />
           <p>
-            To get started, edit <code>src/App.tsx</code> and save to reload.
+            Spell area of effect
           </p>
+          <Widget width={"480px"} height={"480px"}>
+            <Raster columns={16} rows={16} />
+          </Widget>
         </StyledApp>
       </ThemeProvider>
     );
