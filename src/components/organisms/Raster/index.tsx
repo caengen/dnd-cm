@@ -1,29 +1,14 @@
 import * as React from "react";
-import { RasterProps, RasterState, CellModel, SpellModeTexts, CreatureCell } from "./types";
-import { Container, Cell, Grid, Icon, ControlGroup, TopBar, ControlGroupHeader, ResultGroup, ResultGroupHeader, Result, SmallRadio } from "./styles";
+import { RasterProps, RasterState, CellModel, CreatureCell } from "./types";
+import { Container, Cell, Grid } from "./styles";
 import { Bresenham } from "@App/components/organisms/Raster/bresenham";
 import { Coord } from "@App/types";
-import monsterIconChecked from "@App/assets/radio/orc-head-checked.svg";
-import monsterIconUnchecked from "@App/assets/radio/orc-head-unchecked.svg";
-import heroIconChecked from "@App/assets/radio/black-knight-helm-checked.svg";
-import heroIconUnchecked from "@App/assets/radio/black-knight-helm-unchecked.svg";
-import rayIconChecked from "@App/assets/radio/fire-ray-checked.svg";
-import rayIconUnchecked from "@App/assets/radio/fire-ray-unchecked.svg";
-import ringIconChecked from "@App/assets/radio/fire-ring-checked.svg";
-import ringIconUnchecked from "@App/assets/radio/fire-ring-unchecked.svg";
-import coneIconChecked from "@App/assets/radio/corner-explosion-checked.svg";
-import coneIconUnchecked from "@App/assets/radio/corner-explosion-unchecked.svg";
 import { RandomCreature } from "@App/components";
+import RasterControls from "./RasterRadios";
+import TopBar from "./TopBar";
+import DistanceDisplay from "./DistanceDisplay";
 
 export class Raster extends React.Component<RasterProps, RasterState> {
-  readonly ModeStrings: SpellModeTexts = {
-    monster: "Place a Monster",
-    hero: "Place a Hero",
-    ray: "Drag the Beam",
-    explosion: "Drag the Explosion",
-    cone: "Drag the Cone"
-  };
-
   constructor(props: RasterProps) {
     super(props);
 
@@ -245,72 +230,16 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   );
 
   renderRow = (row: CellModel[]) => row.map(this.renderCell);
-    
+  
   render() {
     const { rows, columns } = this.props;
-    const { cells, selectedMode } = this.state;
+    const { cells, selectedMode, distance} = this.state;
 
     return (
       <Container>
         <TopBar>
-          <ControlGroup>
-            <ControlGroupHeader>
-              {this.ModeStrings[selectedMode]}
-            </ControlGroupHeader>
-            <div>
-              <SmallRadio
-                checked={this.state.selectedMode === "monster"}
-                onChange={this.handleModeChange}
-                value="monster"
-                name="mode-radio"
-                aria-label="Monster"
-                icon={<Icon src={monsterIconUnchecked} alt="monster icon" />}
-                checkedIcon={<Icon src={monsterIconChecked} alt="monster icon checked" />}
-              />
-              <SmallRadio
-                checked={this.state.selectedMode === "hero"}
-                onChange={this.handleModeChange}
-                value="hero"
-                name="mode-radio"
-                aria-label="Hero"
-                icon={<Icon src={heroIconUnchecked} alt="hero icon" />}
-                checkedIcon={<Icon src={heroIconChecked} alt="hero icon checked" />}
-              />
-              <SmallRadio
-                checked={this.state.selectedMode === "ray"}
-                onChange={this.handleModeChange}
-                value="ray"
-                name="mode-radio"
-                aria-label="Ray"
-                icon={<Icon src={rayIconUnchecked} alt="spell ray icon" />}
-                checkedIcon={<Icon src={rayIconChecked} alt="spell ray icon checked" />}
-              />
-              <SmallRadio
-                checked={this.state.selectedMode === "explosion"}
-                onChange={this.handleModeChange}
-                value="explosion"
-                name="mode-radio"
-                aria-label="Explosion"
-                icon={<Icon src={ringIconUnchecked} alt="spell explosion icon" />}
-                checkedIcon={<Icon src={ringIconChecked} alt="spell explosion icon checked" />}
-              />
-              <SmallRadio
-                checked={this.state.selectedMode === "cone"}
-                onChange={this.handleModeChange}
-                value="cone"
-                name="mode-radio"
-                aria-label="Cone"
-                icon={<Icon src={coneIconUnchecked} alt="spell cone icon" />}
-                checkedIcon={<Icon src={coneIconChecked} alt="spell cone icon checked" />}
-              />
-            </div>
-          </ControlGroup>
-          <ResultGroup>
-            <ResultGroupHeader>
-              Distance
-            </ResultGroupHeader>
-            <Result>{this.state.distance} feet</Result>
-          </ResultGroup>
+          <RasterControls mode={selectedMode} onModeChange={this.handleModeChange} />
+          <DistanceDisplay distance={distance} />
         </TopBar>
         <Grid columns={columns} rows={rows} onMouseLeave={this.resetGrid}>
           {cells.map(this.renderRow)}

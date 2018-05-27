@@ -1,4 +1,4 @@
-import { Coord } from "@App/types";
+import { Coord, SpellMode } from "@App/types";
 
 export interface RasterProps {
   columns: number;
@@ -21,11 +21,6 @@ export interface RasterState {
 export interface CreatureCell {
   Element: JSX.Element;
   position: Coord;
-}
-
-export type SpellMode = "monster" | "hero" | "ray" | "explosion" | "cone";
-export type SpellModeTexts = {
-  [key in SpellMode]: string;
 }
 
 export interface CellModel {

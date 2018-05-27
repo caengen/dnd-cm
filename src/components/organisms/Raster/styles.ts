@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { AoECellState } from "./types";
-import Radio from 'material-ui/Radio';
 
 export const Container = styled.div`
   height: 100%;
@@ -54,62 +53,4 @@ export const Cell = styled<CellProps, 'div'>('div')`
     pointer-events: none;
     height: .7em;
   }
-`;
-
-export const Icon = styled.img`
-  height: 2em;
-`;
-
-export const TopBar = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 2px solid #dfdb10;
-  background-color: yellow;
-  padding: .5rem;
-  font-family: "Nodesto Caps Condensed";
-`;
-
-export const SmallRadio = styled(Radio)`
-  font-size: 1em !important;
-`;
-
-export const ResultGroupHeader = styled.h2`
-  font-size: 1em;
-  color: #B5B202;
-  margin: 0;
-  text-align: right;
-  letter-spacing: 0px;
-`;
-
-export const ResultGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-export const Result = styled.span`
-  font-size: 2em;
-  color: #676500;
-`;
-
-export const ControlGroupHeader = styled.h2`
-  font-size: 1em;
-  color: #B5B202;
-  margin: 0;
-  text-align: left;
-  font-family: "Nodesto Caps Condensed";
-  letter-spacing: 0px;
-`;
-
-export const ControlGroup = styled.div`
-  &>span {
-    font-size: 1em;
-  }
-`;
-
-export const Control = styled.button`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 `;

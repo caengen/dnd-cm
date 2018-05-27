@@ -16,16 +16,40 @@ import robe from "@App/assets/heroes/robe.svg";
 import swordman from "@App/assets/heroes/swordman.svg";
 import swordwoman from "@App/assets/heroes/swordwoman.svg";
 import { Container, Tag } from './styles';
+import { DragSource } from 'react-dnd';
 const heroes = [ knight, barbarian, monk, robe, swordman, swordwoman ];
 
-export interface RandomCreatureProps {
+export interface RandomCreatureOwnProps {
   type: "hero" | "monster";
   tag?: number;
 }
 
+interface RandomCreatureSourceProps {
+  isDragging?: boolean;
+  connectDragSource?: any;
+}
+
+type RandomCreatureProps = RandomCreatureOwnProps & RandomCreatureSourceProps;
+
+const randomCreatureSource = {
+  beginDrag: (props: RandomCreatureSourceProps) => ({})
+}
+
+const randomCreatureSourceCollector = (connect: any, monitor: any): any => {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  }
+}
+
+@DragSource("creature", randomCreatureSource, randomCreatureSourceCollector)
 export class RandomCreature extends React.Component<RandomCreatureProps, any> {
+  constructor(props: RandomCreatureProps) {
+    super(props);
+  }
+
   render() {
-    const { type, tag } = this.props;
+    const { type, tag, connectDragSource } = this.props;
 
     let icon = "";
     if (type === "monster") {
@@ -34,7 +58,8 @@ export class RandomCreature extends React.Component<RandomCreatureProps, any> {
       icon = heroes[Math.floor(Math.random() * heroes.length)];
     }
     const color = type === "monster" ? "red" : "aliceblue";
-    return (
+
+    return connectDragSource(
       <Container>
         <Tag color={color}>{tag}</Tag>
         <Icon src={icon} alt={`creature icon`} />
