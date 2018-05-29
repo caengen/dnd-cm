@@ -4,7 +4,11 @@ import { StyledApp } from './style';
 import theme from './theme';
 import Header from '@App/components/organisms/Header';
 import { Raster, Widget } from '@App/components';
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
 
+
+@DragDropContext(HTML5Backend)
 class App extends React.Component {
   public render() {
     return (

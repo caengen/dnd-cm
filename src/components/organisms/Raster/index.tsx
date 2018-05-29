@@ -1,12 +1,14 @@
 import * as React from "react";
-import { RasterProps, RasterState, CellModel, CreatureCell } from "./types";
-import { Container, Cell, Grid } from "./styles";
-import { Bresenham } from "@App/components/organisms/Raster/bresenham";
+import { RasterProps, RasterState, CreatureCell } from "./types";
+import { Container, Grid } from "./styles";
+import { Bresenham } from "./bresenham";
 import { Coord } from "@App/types";
 import { RandomCreature } from "@App/components";
 import RasterControls from "./RasterRadios";
 import TopBar from "./TopBar";
 import DistanceDisplay from "./DistanceDisplay";
+import Cell from "./Cell";
+import { CellModel } from "@App/types/CellModel";
 
 export class Raster extends React.Component<RasterProps, RasterState> {
   constructor(props: RasterProps) {
@@ -81,7 +83,7 @@ export class Raster extends React.Component<RasterProps, RasterState> {
     if (selectedMode !== "ray" && selectedMode !== "explosion" && selectedMode != "cone") return;
 
     const newCell = { ...cell, state: "origin" } as CellModel;
-    let newCells = cells.slice();
+    const newCells = cells.slice();
     newCells[cell.row][cell.col] = newCell;
 
     this.setState({
@@ -219,7 +221,8 @@ export class Raster extends React.Component<RasterProps, RasterState> {
   renderCell = (cell: CellModel) => (
     <Cell 
       key={cell.id} 
-      state={cell.state} 
+      cellState={cell.state}
+      model={cell}
       onMouseDown={() => this.handleCellMouseDown(cell)} 
       onMouseUp={() => this.handleCellMouseUp(cell)}
       onMouseEnter={() => this.handleCellEnter(cell)}

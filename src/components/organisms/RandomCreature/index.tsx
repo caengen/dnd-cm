@@ -17,6 +17,7 @@ import swordman from "@App/assets/heroes/swordman.svg";
 import swordwoman from "@App/assets/heroes/swordwoman.svg";
 import { Container, Tag } from './styles';
 import { DragSource } from 'react-dnd';
+import { DropType } from '@App/types';
 const heroes = [ knight, barbarian, monk, robe, swordman, swordwoman ];
 
 export interface RandomCreatureOwnProps {
@@ -42,7 +43,7 @@ const randomCreatureSourceCollector = (connect: any, monitor: any): any => {
   }
 }
 
-@DragSource("creature", randomCreatureSource, randomCreatureSourceCollector)
+@DragSource(DropType.Creature, randomCreatureSource, randomCreatureSourceCollector)
 export class RandomCreature extends React.Component<RandomCreatureProps, any> {
   constructor(props: RandomCreatureProps) {
     super(props);
