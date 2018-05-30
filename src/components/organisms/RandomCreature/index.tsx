@@ -30,6 +30,10 @@ interface RandomCreatureSourceProps {
   connectDragSource?: any;
 }
 
+interface RandomCreatureState {
+  icon?: string;
+}
+
 type RandomCreatureProps = RandomCreatureOwnProps & RandomCreatureSourceProps;
 
 const randomCreatureSource = {
@@ -44,27 +48,37 @@ const randomCreatureSourceCollector = (connect: any, monitor: any): any => {
 }
 
 @DragSource(DropType.Creature, randomCreatureSource, randomCreatureSourceCollector)
-export class RandomCreature extends React.Component<RandomCreatureProps, any> {
+export class RandomCreature extends React.Component<RandomCreatureProps, RandomCreatureState> {
   constructor(props: RandomCreatureProps) {
     super(props);
+
+    this.state = {
+      icon: this.createIcon()
+    }
+  }
+  createIcon = () => {
+    const { type } = this.props;
+
+    if (type === "monster") {
+      return monsters[Math.floor(Math.random() * monsters.length)];
+    } else {
+      return heroes[Math.floor(Math.random() * heroes.length)];
+    }
   }
 
   render() {
     const { type, tag, connectDragSource } = this.props;
-
-    let icon = "";
-    if (type === "monster") {
-      icon = monsters[Math.floor(Math.random() * monsters.length)];
-    } else {
-      icon = heroes[Math.floor(Math.random() * heroes.length)];
-    }
+    const { icon } = this.state;
+    
     const color = type === "monster" ? "red" : "aliceblue";
 
     return connectDragSource(
-      <Container>
-        <Tag color={color}>{tag}</Tag>
-        <Icon src={icon} alt={`creature icon`} />
-      </Container>
+      <div>
+        <Container>
+          <Tag color={color}>{tag}</Tag>
+          <Icon src={icon} alt={`creature icon`} />
+        </Container>
+      </div>
     );
   }
 }
